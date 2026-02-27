@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MPCA 資格証明書</title>
+    <style>
+        :root {
+            --shindan-bg: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+            --repair-bg: linear-gradient(135deg, #ffb300 0%, #f5a623 100%);
+            --coating-bg: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+            --sanshikaku-bg: linear-gradient(to bottom, #1a1a1a 0%, #000000 30%, #214a24 40%, #388e3c 48%, #43a047 100%);
+            --master-bg: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            --smarthome-bg: linear-gradient(135deg, #ff4081 0%, #f06292 100%);
+            --default-bg: linear-gradient(135deg, #757575 0%, #424242 100%);
+        }
+        body { font-family: -apple-system, sans-serif; background: #f4f7f9; margin: 0; padding: 0; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        .login-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .login-box { width: 85%; max-width: 340px; padding: 40px 25px; background: #fff; border-radius: 24px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.06); }
+        .login-logo { width: 100%; max-width: 220px; height: 100px; margin-bottom: 30px; object-fit: contain; display: block; margin-left: auto; margin-right: auto; }
+        input { width: 100%; padding: 16px; border: 1.5px solid #eee; border-radius: 14px; font-size: 16px; box-sizing: border-box; margin-bottom: 15px; outline: none; display: block; }
+        .save-id-wrap { display: flex; align-items: center; justify-content: flex-start; margin-bottom: 20px; padding-left: 5px; cursor: pointer; }
+        .save-id-wrap input { width: 18px; height: 18px; margin: 0 10px 0 0; cursor: pointer; }
+        .save-id-label { font-size: 14px; color: #666; cursor: pointer; }
+        .login-btn { width: 100%; padding: 18px; background: #007aff; color: white; border: none; border-radius: 14px; font-size: 17px; font-weight: bold; cursor: pointer; position: relative; display: flex; align-items: center; justify-content: center; }
+        .login-btn:disabled { background: #b0d4ff; cursor: wait; }
+        .spinner { display: none; width: 18px; height: 18px; border: 3px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; position: absolute; right: 20px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ヘッダー */
+        .header { padding: 15px 20px; position: relative; z-index: 10; background: #fff; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: flex-start; }
+        .header-logo { width: 40px; height: 40px; object-fit: contain; margin-right: 12px; flex-shrink: 0; }
+        .user-info { display: flex; flex-direction: column; margin-right: 15px; flex-shrink: 0; }
+        .user-id { font-size: 9px; color: #888; font-weight: bold; margin-bottom: 2px; }
+        .user-name { font-size: 16px; font-weight: 800; color: #111; white-space: nowrap; }
+        .header-badges { display: flex; gap: 6px; align-items: center; }
+        .mini-badge { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #ddd; border: 1px solid #bbb; transition: all 0.3s; flex-shrink: 0; }
+        .mini-badge svg { width: 20px; height: 20px; fill: #999; }
+        .mini-badge.unlocked { opacity: 1; border: none; box-shadow: 0 3px 8px rgba(0,0,0,0.15); }
+        .mini-badge.unlocked svg { fill: #fff; }
+        .gold-placeholder { background: #f0f0f0 !important; border: 1.5px solid #bbb !important; font-size: 13px; color: #999; font-weight: 900; }
+        .gold-unlocked { background: linear-gradient(135deg, #ffd700, #b38728) !important; border: none !important; box-shadow: 0 0 10px rgba(255,215,0,0.6); color: white; }
+
+        /* カードリスト */
+        #card-list { padding: 10px 20px 600px; display: flex; flex-direction: column; align-items: center; transition: all 0.5s; }
+        .id-card { 
+            width: 100%; max-width: 400px; aspect-ratio: 1.58 / 1; border-radius: 18px; padding: 24px; margin-bottom: -168px; 
+            position: relative; box-shadow: 0 8px 25px rgba(0,0,0,0.15); display: flex; flex-direction: column; justify-content: space-between; 
+            box-sizing: border-box; transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); color: #fff; overflow: hidden; 
+        }
+        .id-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.06) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.06) 75%, transparent 75%, transparent); background-size: 8px 8px; z-index: 2; pointer-events: none; }
+        .id-card::after { content: ""; position: absolute; top: 52%; left: 50%; width: 210px; height: 210px; transform: translate(-50%, -50%); background: url('https://www.mpca.or.jp/wp-content/uploads/2026/02/MPCAlogo.w.png') no-repeat center; background-size: contain; opacity: 0.15; z-index: 1; pointer-events: none; }
+        .id-card.active { transform: translateY(-10px) scale(1.05); z-index: 100 !important; margin-bottom: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.4); filter: grayscale(0) brightness(1); opacity: 1; }
+        #card-list.has-active .id-card:not(.active) { filter: grayscale(80%) brightness(0.6); opacity: 0.5; transform: scale(0.92); }
+        .qual-title { font-size: 18px; font-weight: bold; border-left: 3.5px solid #fff; padding-left: 10px; z-index: 3; line-height: 1.1; }
+        .user-name-serif { position: absolute; top: 60%; left: 0; width: 100%; text-align: center; transform: translateY(-50%); z-index: 2; font-family: serif; font-size: clamp(24px, 7vw, 36px); letter-spacing: 4px; text-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+        .official-seal { position: absolute; width: 60px; height: 60px; right: 25px; bottom: 25px; background: url('https://www.mpca.or.jp/wp-content/uploads/2026/02/mpca.stamp_.png') no-repeat center; background-size: contain; opacity: 0.95; z-index: 3; }
+        .date-box { position: absolute; bottom: 20px; left: 24px; z-index: 3; font-size: 10px; background: rgba(0,0,0,0.25); padding: 4px 12px; border-radius: 20px; }
+        #gold-banner { display: none; text-align: center; padding: 40px 0 20px; }
+        .big-trophy { font-size: 80px; }
+    </style>
+</head>
+<body>
+<div id="app">
+    <div id="login-screen" class="login-container">
+        <div class="login-box">
+            <img src="https://www.mpca.or.jp/wp-content/uploads/2026/02/MPCAlogo.c.png" class="login-logo">
+            <input type="text" id="input-id" placeholder="会員ID" inputmode="numeric">
+            <input type="text" id="input-birth" placeholder="生年月日 8桁" inputmode="numeric">
+            <label class="save-id-wrap"><input type="checkbox" id="check-save-id"> <span class="save-id-label">IDを保存する</span></label>
+            <button class="login-btn" id="login-btn" onclick="handleLogin()"><span id="btn-text">認証を開始</span><div class="spinner" id="btn-spinner"></div></button>
+        </div>
+    </div>
+    <div id="portal-ui" style="display:none; opacity:0; transition:opacity 0.3s ease;">
+        <div class="header">
+            <img src="https://www.mpca.or.jp/wp-content/uploads/2026/02/MPCAlogo.c.png" class="header-logo">
+            <div class="user-info">
+                <span id="header-id" class="user-id"></span>
+                <span id="header-name" class="user-name"></span>
+            </div>
+            <div class="header-badges">
+                <div class="mini-badge" id="m-shindan"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/></svg></div>
+                <div class="mini-badge" id="m-repair"><svg viewBox="0 0 24 24"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg></div>
+                <div class="mini-badge" id="m-coating"><svg viewBox="0 0 24 24"><path d="M12.14 2.14L5.86 8.41 12.14 14.69 18.41 8.41 12.14 2.14zM12.14 21.86L5.86 15.59 12.14 9.31 18.41 15.59 12.14 21.86z"/></svg></div>
+                <div class="mini-badge gold-placeholder" id="m-gold-dot">?</div>
+            </div>
+        </div>
+        <div id="gold-banner"><div class="big-trophy">🏆</div><div class="congratulations">TRIPLE COMPLETED</div></div>
+        <div id="card-list"></div>
+        <div style="text-align:center; padding: 40px;"><a onclick="handleLogout()" style="color:#aaa; font-size:12px; cursor:pointer; font-weight:bold;">LOGOUT</a></div>
+    </div>
+</div>
+
+<script>
+    // ★ ここにあなたの「現在のGASウェブアプリURL」を入れてください
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbyuE32iPDFZZ5fUeiZZEFUSbl5OtYzAki4GuZJiD0dyCnnQfwYGls6fNyyjI90i0_fssQ/exec";
+
+    const colorMap = { "スマホ診断士": "var(--shindan-bg)", "スマホ修理士": "var(--repair-bg)", "スマホコーティング士": "var(--coating-bg)", "三資格": "var(--sanshikaku-bg)", "コーティング士 MASTER": "var(--master-bg)", "スマートホーム士": "var(--smarthome-bg)" };
+
+    window.onload = function() { 
+        const savedId = localStorage.getItem('mpca_saved_id'); 
+        if (savedId) { document.getElementById('input-id').value = savedId; document.getElementById('check-save-id').checked = true; } 
+    };
+
+    async function handleLogin() {
+        const id = document.getElementById('input-id').value.trim();
+        const birth = document.getElementById('input-birth').value.trim();
+        const btn = document.getElementById('login-btn');
+        if(!id || !birth) return;
+        btn.disabled = true;
+        document.getElementById('btn-text').innerText = "照合中...";
+        document.getElementById('btn-spinner').style.display = "block";
+
+        try {
+            // GASをデータ取得窓口として叩く（POST送信）
+            const response = await fetch(GAS_URL, {
+                method: "POST",
+                body: JSON.stringify({ id: id, birth: birth })
+            });
+            const user = await response.json();
+
+            if(user && user.success) {
+                if (document.getElementById('check-save-id').checked) localStorage.setItem('mpca_saved_id', id);
+                showPortal(user);
+            } else {
+                alert("認証失敗");
+                resetBtn();
+            }
+        } catch (e) {
+            alert("接続エラー：GASのデプロイ設定を確認してください");
+            resetBtn();
+        }
+    }
+
+    function resetBtn() { const btn = document.getElementById('login-btn'); btn.disabled = false; document.getElementById('btn-text').innerText = "認証を開始"; document.getElementById('btn-spinner').style.display = "none"; }
+    function handleLogout() { if(!confirm("ログアウトしますか？")) return; location.reload(); }
+
+    function showPortal(user) {
+        document.getElementById('login-screen').style.display = 'none'; 
+        const portal = document.getElementById('portal-ui'); 
+        portal.style.display = 'block'; 
+        setTimeout(() => portal.style.opacity = "1", 50);
+        document.getElementById('header-id').innerText = "ID: " + user.id; 
+        document.getElementById('header-name').innerText = user.name;
+        
+        const mShindan = document.getElementById('m-shindan');
+        const mRepair = document.getElementById('m-repair');
+        const mCoating = document.getElementById('m-coating');
+        [mShindan, mRepair, mCoating].forEach(b => { b.classList.remove('unlocked'); b.style.background = '#ddd'; });
+
+        let s = false, r = false, c = false;
+        user.quals.forEach(q => {
+            if(q.name === "三資格") { s = true; r = true; c = true; }
+            else if(q.name === "スマホ診断士") { s = true; }
+            else if(q.name === "スマホ修理士") { r = true; }
+            else if(q.name === "スマホコーティング士") { c = true; }
+        });
+
+        if(s) { mShindan.classList.add('unlocked'); mShindan.style.background = '#4caf50'; }
+        if(r) { mRepair.classList.add('unlocked'); mRepair.style.background = '#ffb300'; }
+        if(c) { mCoating.classList.add('unlocked'); mCoating.style.background = '#1976d2'; }
+
+        const goldBadge = document.getElementById('m-gold-dot');
+        if(s && r && c) { 
+            document.getElementById('gold-banner').style.display = 'block'; 
+            goldBadge.classList.remove('gold-placeholder'); goldBadge.classList.add('gold-unlocked'); goldBadge.innerText = "🏆"; 
+        } else { 
+            document.getElementById('gold-banner').style.display = 'none'; 
+            goldBadge.classList.add('gold-placeholder'); goldBadge.classList.remove('gold-unlocked'); goldBadge.innerText = "?"; 
+        }
+
+        const list = document.getElementById('card-list'); 
+        list.innerHTML = '';
+        user.quals.forEach((q, i) => {
+            const div = document.createElement('div'); 
+            div.className = 'id-card'; 
+            div.style.background = colorMap[q.name] || "var(--default-bg)"; 
+            div.style.zIndex = i; 
+            div.dataset.index = i;
+            div.innerHTML = `<div style="z-index:3;"><div style="font-size:10px; opacity:0.8;">ID CARD</div><div class="qual-title">${q.display}</div></div><div class="user-name-serif">${user.name}</div><div class="official-seal"></div><div class="date-box">REG: ${q.date}</div>`;
+            
+            div.onclick = function() {
+                const active = this.classList.contains('active'); 
+                document.querySelectorAll('.id-card').forEach(card => { 
+                    card.classList.remove('active'); 
+                    card.style.zIndex = card.dataset.index; 
+                    card.style.marginBottom = "-168px"; 
+                });
+                list.classList.remove('has-active');
+                if(!active) { 
+                    this.classList.add('active'); 
+                    this.style.zIndex = "100"; 
+                    this.style.marginBottom = "20px"; 
+                    list.classList.add('has-active');
+                }
+            };
+            list.appendChild(div);
+        });
+        window.scrollTo(0, 0);
+    }
+</script>
+</body>
+</html>
