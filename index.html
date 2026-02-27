@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MPCA 資格証明書</title>
+
+    <link rel="apple-touch-icon" href="https://www.mpca.or.jp/wp-content/uploads/2026/02/MPCAlogo.c.png">
+    <link rel="icon" type="image/png" href="https://www.mpca.or.jp/wp-content/uploads/2026/02/MPCAlogo.c.png">
+
     <style>
         :root {
             --shindan-bg: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
@@ -92,7 +96,6 @@
 </div>
 
 <script>
-    // ★ ここにあなたの「現在のGASウェブアプリURL」を入れてください
     const GAS_URL = "https://script.google.com/macros/s/AKfycbyuE32iPDFZZ5fUeiZZEFUSbl5OtYzAki4GuZJiD0dyCnnQfwYGls6fNyyjI90i0_fssQ/exec";
 
     const colorMap = { "スマホ診断士": "var(--shindan-bg)", "スマホ修理士": "var(--repair-bg)", "スマホコーティング士": "var(--coating-bg)", "三資格": "var(--sanshikaku-bg)", "コーティング士 MASTER": "var(--master-bg)", "スマートホーム士": "var(--smarthome-bg)" };
@@ -112,7 +115,6 @@
         document.getElementById('btn-spinner').style.display = "block";
 
         try {
-            // GASをデータ取得窓口として叩く（POST送信）
             const response = await fetch(GAS_URL, {
                 method: "POST",
                 body: JSON.stringify({ id: id, birth: birth })
@@ -127,7 +129,7 @@
                 resetBtn();
             }
         } catch (e) {
-            alert("接続エラー：GASのデプロイ設定を確認してください");
+            alert("接続エラー：インターネット接続を確認してください");
             resetBtn();
         }
     }
