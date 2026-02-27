@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>MPCA 資格証明書</title>
 
     <link rel="apple-touch-icon" href="https://www.mpca.or.jp/wp-content/uploads/2026/02/MPCAlogo.c.png">
@@ -45,6 +45,13 @@
         .gold-placeholder { background: #f0f0f0 !important; border: 1.5px solid #bbb !important; font-size: 13px; color: #999; font-weight: 900; }
         .gold-unlocked { background: linear-gradient(135deg, #ffd700, #b38728) !important; border: none !important; box-shadow: 0 0 10px rgba(255,215,0,0.6); color: white; }
 
+        /* カップのアニメーション設定（復活！） */
+        #gold-banner { display: none; text-align: center; padding: 40px 0 20px; animation: trophy-in 1s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
+        .big-trophy { font-size: 80px; filter: drop-shadow(0 0 20px rgba(255,215,0,0.7)); display: inline-block; animation: shine 2.5s infinite; }
+        .congratulations { font-size: 14px; font-weight: 900; color: #b38728; letter-spacing: 3px; margin-top: 15px; }
+        @keyframes trophy-in { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes shine { 0%, 100% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.1); filter: brightness(1.3) drop-shadow(0 0 35px rgba(255,215,0,0.9)); } }
+
         /* カードリスト */
         #card-list { padding: 10px 20px 600px; display: flex; flex-direction: column; align-items: center; transition: all 0.5s; }
         .id-card { 
@@ -60,8 +67,6 @@
         .user-name-serif { position: absolute; top: 60%; left: 0; width: 100%; text-align: center; transform: translateY(-50%); z-index: 2; font-family: serif; font-size: clamp(24px, 7vw, 36px); letter-spacing: 4px; text-shadow: 0 2px 6px rgba(0,0,0,0.3); }
         .official-seal { position: absolute; width: 60px; height: 60px; right: 25px; bottom: 25px; background: url('https://www.mpca.or.jp/wp-content/uploads/2026/02/mpca.stamp_.png') no-repeat center; background-size: contain; opacity: 0.95; z-index: 3; }
         .date-box { position: absolute; bottom: 20px; left: 24px; z-index: 3; font-size: 10px; background: rgba(0,0,0,0.25); padding: 4px 12px; border-radius: 20px; }
-        #gold-banner { display: none; text-align: center; padding: 40px 0 20px; }
-        .big-trophy { font-size: 80px; }
     </style>
 </head>
 <body>
